@@ -39,10 +39,16 @@ export const StyledInput: React.FC<StyledInputProps> = ({
         <TextInput
           style={styles.input}
           placeholderTextColor="#9ca3af"
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
           secureTextEntry={isPassword && !showPassword}
           {...props}
+          onFocus={(e) => {
+            setIsFocused(true);
+            props.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            props.onBlur?.(e);
+          }}
         />
         {isPassword && (
           <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>

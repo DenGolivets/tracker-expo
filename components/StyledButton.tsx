@@ -47,6 +47,22 @@ export const StyledButton: React.FC<StyledButtonProps> = ({
     );
   }
 
+  if (variant === "outline") {
+    return (
+      <TouchableOpacity
+        onPress={onPress}
+        disabled={isLoading}
+        style={[styles.container, styles.buttonOutline, style]}
+      >
+        {isLoading ? (
+          <ActivityIndicator color="#4f46e5" />
+        ) : (
+          <Text style={styles.textOutline}>{title}</Text>
+        )}
+      </TouchableOpacity>
+    );
+  }
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -83,6 +99,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  buttonOutline: {
+    backgroundColor: "transparent",
+    borderWidth: 2,
+    borderColor: "#4f46e5",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   textPrimary: {
     color: "#fff",
     fontSize: 16,
@@ -91,6 +114,12 @@ const styles = StyleSheet.create({
   },
   textSecondary: {
     color: "#374151",
+    fontSize: 16,
+    fontWeight: "600",
+    letterSpacing: 0.5,
+  },
+  textOutline: {
+    color: "#4f46e5",
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.5,

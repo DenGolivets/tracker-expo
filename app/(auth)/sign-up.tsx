@@ -81,11 +81,20 @@ export default function SignUpScreen() {
   const onGooglePress = async () => {
     try {
       const { createdSessionId, setActive } = await startOAuthFlow();
-      if (createdSessionId) {
-        setActive!({ session: createdSessionId });
+      if (createdSessionId && setActive) {
+        await setActive({ session: createdSessionId });
+      } else if (!createdSessionId) {
+        Alert.alert(
+          "Sign Up Header",
+          "Google sign-up was cancelled or failed. Please try again.",
+        );
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("OAuth error", err);
+      Alert.alert(
+        "Error",
+        "An unexpected error occurred during Google sign-up. Please try again later.",
+      );
     }
   };
 

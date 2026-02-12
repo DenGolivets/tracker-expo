@@ -28,6 +28,7 @@ export default function SignInScreen() {
   const [emailAddress, setEmailAddress] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   const onSignInPress = async () => {
     if (!isLoaded) return;
@@ -51,13 +52,27 @@ export default function SignInScreen() {
   };
 
   const onGooglePress = async () => {
+    setIsGoogleLoading(true);
     try {
       const { createdSessionId, setActive } = await startOAuthFlow();
-      if (createdSessionId) {
-        setActive!({ session: createdSessionId });
+      if (createdSessionId && typeof setActive === "function") {
+        await setActive({ session: createdSessionId });
+      } else {
+        setIsGoogleLoading(false);
+        Alert.alert(
+          "Sign In Header",
+          "Google sign-in was cancelled or failed. Please try again.",
+        );
       }
-    } catch (err) {
+    } catch (err: any) {
+      setIsGoogleLoading(false);
       console.error("OAuth error", err);
+      Alert.alert(
+        "Error",
+        "An unexpected error occurred during Google sign-in.",
+      );
+    } finally {
+      setIsGoogleLoading(false);
     }
   };
 
@@ -109,7 +124,11 @@ export default function SignInScreen() {
             <View style={styles.line} />
           </View>
 
-          <SocialButton strategy="google" onPress={onGooglePress} />
+          <SocialButton
+            strategy="google"
+            onPress={onGooglePress}
+            isLoading={isGoogleLoading}
+          />
 
           <View style={styles.footer}>
             <Text style={styles.footerText}>Don&apos;t have an account? </Text>
