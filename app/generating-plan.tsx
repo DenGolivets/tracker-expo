@@ -34,6 +34,7 @@ export default function GeneratingPlanScreen() {
   const { user } = useUser();
   const router = useRouter();
   const { refreshProfile } = useUserContext();
+  const generationStartedRef = React.useRef(false);
 
   const [steps, setSteps] = useState<Step[]>(INITIAL_STEPS);
   const [error, setError] = useState<string | null>(null);
@@ -77,9 +78,16 @@ export default function GeneratingPlanScreen() {
 
       // --- Step 4: Saving Plan (REAL) ---
       updateStepStatus(4, "loading");
-      await saveUserPlan(user.id, plan);
-      await completeOnboarding(user.id);
-      updateStepStatus(4, "completed");
+      try {
+        await saveUserPlan(user.id, plan);
+        await completeOnboarding(user.id);
+        updateStepStatus(4, "completed");
+      } catch (saveError: any) {
+        console.error("Error in Step 4 (Save/Complete):", saveError);
+        throw new Error(
+          `Ошибка сохранения плана: ${saveError.message || "пожалуйста, проверьте интернет-соединение"}`,
+        );
+      }
 
       // --- Finalizing ---
       await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -93,6 +101,8 @@ export default function GeneratingPlanScreen() {
   }, [user, refreshProfile, router]);
 
   useEffect(() => {
+    if (generationStartedRef.current) return;
+    generationStartedRef.current = true;
     startGeneration();
   }, [startGeneration]);
 

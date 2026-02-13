@@ -22,12 +22,14 @@ export const saveUser = async (user: any) => {
       console.log("User saved to Firestore");
     } catch (error) {
       console.error("Error saving user to Firestore:", error);
+      throw error;
     }
   } else {
     try {
       await setDoc(userRef, { updatedAt: serverTimestamp() }, { merge: true });
     } catch (error) {
       console.error("Error updating user in Firestore:", error);
+      throw error;
     }
   }
 };
@@ -42,13 +44,9 @@ export const getUserProfile = async (userId: string) => {
     return null;
   } catch (error) {
     console.error("Error getting user profile:", error);
-    return null;
+    throw error;
   }
 };
-
-// ... existing imports ...
-
-// ... saveUser and getUserProfile unchanged ...
 
 export const saveUserProfile = async (
   userId: string,
@@ -69,6 +67,7 @@ export const saveUserProfile = async (
     console.log("User profile saved to Firestore");
   } catch (error) {
     console.error("Error saving user profile:", error);
+    throw error;
   }
 };
 
@@ -86,6 +85,7 @@ export const saveUserPlan = async (userId: string, planData: any) => {
     console.log("User plan saved to Firestore");
   } catch (error) {
     console.error("Error saving user plan:", error);
+    throw error;
   }
 };
 
@@ -103,5 +103,6 @@ export const completeOnboarding = async (userId: string) => {
     console.log("Onboarding marked as complete");
   } catch (error) {
     console.error("Error completing onboarding:", error);
+    throw error;
   }
 };

@@ -143,10 +143,59 @@ export default function OnboardingScreen() {
         Alert.alert("Обязательно", "Пожалуйста, введите полную дату рождения.");
         return;
       }
+
+      const day = parseInt(birthDay, 10);
+      const month = parseInt(birthMonth, 10);
+      const year = parseInt(birthYear, 10);
+      const currentYear = new Date().getFullYear();
+
+      const isValidDate = (d: number, m: number, y: number) => {
+        const dt = new Date(y, m - 1, d);
+        return (
+          dt.getFullYear() === y &&
+          dt.getMonth() === m - 1 &&
+          dt.getDate() === d
+        );
+      };
+
+      if (
+        isNaN(day) ||
+        isNaN(month) ||
+        isNaN(year) ||
+        day < 1 ||
+        day > 31 ||
+        month < 1 ||
+        month > 12 ||
+        year < 1900 ||
+        year > currentYear ||
+        !isValidDate(day, month, year)
+      ) {
+        Alert.alert("Ошибка", "Пожалуйста, введите корректную дату рождения.");
+        return;
+      }
     }
-    if (currentStep === 4 && (!heightFeet || !weight)) {
-      Alert.alert("Обязательно", "Пожалуйста, введите ваш рост и вес.");
-      return;
+    if (currentStep === 4) {
+      const hFeet = parseFloat(heightFeet);
+      const wKg = parseFloat(weight);
+
+      if (
+        !heightFeet ||
+        !weight ||
+        isNaN(hFeet) ||
+        isNaN(wKg) ||
+        !Number.isFinite(hFeet) ||
+        !Number.isFinite(wKg) ||
+        hFeet <= 0 ||
+        wKg <= 0
+      ) {
+        Alert.alert("Ошибка", "Пожалуйста, введите корректные рост и вес.");
+        return;
+      }
+
+      if (hFeet > 10 || wKg > 500) {
+        Alert.alert("Ошибка", "Пожалуйста, введите реалистичные параметры.");
+        return;
+      }
     }
 
     if (currentStep < TOTAL_STEPS) {
