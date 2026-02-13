@@ -1,6 +1,7 @@
 import { SocialButton } from "@/components/SocialButton";
 import { StyledButton } from "@/components/StyledButton";
 import { StyledInput } from "@/components/StyledInput";
+import { Colors } from "@/constants/Colors";
 import { useWarmUpBrowser } from "@/hooks/useWarmUpBrowser";
 import { useOAuth, useSignIn } from "@clerk/clerk-expo";
 import { Link } from "expo-router";
@@ -88,13 +89,15 @@ export default function SignInScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.title}>Welcome Back!</Text>
-          <Text style={styles.subtitle}>Sign in to continue your journey</Text>
+          <Text style={styles.title}>С возвращением!</Text>
+          <Text style={styles.subtitle}>
+            Войдите, чтобы продолжить путь к цели
+          </Text>
         </View>
 
         <View style={styles.form}>
           <StyledInput
-            label="Email Address"
+            label="Электронная почта"
             placeholder="hello@example.com"
             value={emailAddress}
             onChangeText={setEmailAddress}
@@ -104,7 +107,7 @@ export default function SignInScreen() {
           />
 
           <StyledInput
-            label="Password"
+            label="Пароль"
             placeholder="••••••••"
             value={password}
             onChangeText={setPassword}
@@ -113,14 +116,14 @@ export default function SignInScreen() {
           />
 
           <StyledButton
-            title="Sign In"
+            title="Войти"
             onPress={onSignInPress}
             isLoading={loading}
           />
 
           <View style={styles.divider}>
             <View style={styles.line} />
-            <Text style={styles.dividerText}>Or continue with</Text>
+            <Text style={styles.dividerText}>Или через</Text>
             <View style={styles.line} />
           </View>
 
@@ -131,9 +134,9 @@ export default function SignInScreen() {
           />
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Don&apos;t have an account? </Text>
+            <Text style={styles.footerText}>Нет аккаунта? </Text>
             <Link href="/sign-up" asChild>
-              <Text style={styles.link}>Sign Up</Text>
+              <Text style={styles.link}>Зарегистрироваться</Text>
             </Link>
           </View>
         </View>
@@ -145,7 +148,7 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -164,12 +167,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: Colors.text.primary,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#6b7280",
+    color: Colors.text.secondary,
     textAlign: "center",
   },
   form: {
@@ -183,11 +186,11 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: "#e5e7eb",
+    backgroundColor: Colors.neutral[200],
   },
   dividerText: {
     marginHorizontal: 16,
-    color: "#9ca3af",
+    color: Colors.neutral[400],
     fontSize: 14,
   },
   footer: {
@@ -196,11 +199,11 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   footerText: {
-    color: "#6b7280",
+    color: Colors.text.secondary,
     fontSize: 14,
   },
   link: {
-    color: "#4f46e5",
+    color: Colors.primary[600],
     fontSize: 14,
     fontWeight: "600",
   },

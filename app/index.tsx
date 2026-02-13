@@ -7,13 +7,14 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Calories Tracker</Text>
+      <Text style={styles.title}>Добро пожаловать в Трекер Калорий</Text>
       <Text style={styles.subtitle}>
-        Hello, {user?.fullName || user?.primaryEmailAddress?.emailAddress}
+        Здравствуйте,{" "}
+        {user?.fullName || user?.primaryEmailAddress?.emailAddress}
       </Text>
 
       <View style={styles.buttonContainer}>
-        <Button title="Sign Out" onPress={() => signOut()} />
+        <Button title="Выйти" onPress={() => signOut()} />
       </View>
     </View>
   );
@@ -30,11 +31,13 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 10,
+    textAlign: "center",
   },
   subtitle: {
     fontSize: 16,
     color: "#666",
     marginBottom: 20,
+    textAlign: "center",
   },
   buttonContainer: {
     marginTop: 20,

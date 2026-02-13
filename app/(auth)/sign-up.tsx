@@ -1,6 +1,7 @@
 import { SocialButton } from "@/components/SocialButton";
 import { StyledButton } from "@/components/StyledButton";
 import { StyledInput } from "@/components/StyledInput";
+import { Colors } from "@/constants/Colors";
 import { useWarmUpBrowser } from "@/hooks/useWarmUpBrowser";
 import { useOAuth, useSignUp } from "@clerk/clerk-expo";
 import { Link } from "expo-router";
@@ -110,14 +111,14 @@ export default function SignUpScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.title}>Create Account</Text>
-          <Text style={styles.subtitle}>Start your journey with us today</Text>
+          <Text style={styles.title}>Создать аккаунт</Text>
+          <Text style={styles.subtitle}>Начните свой путь с нами сегодня</Text>
         </View>
 
         {!pendingVerification ? (
           <View style={styles.form}>
             <StyledInput
-              label="Email Address"
+              label="Электронная почта"
               placeholder="hello@example.com"
               value={emailAddress}
               onChangeText={setEmailAddress}
@@ -127,7 +128,7 @@ export default function SignUpScreen() {
             />
 
             <StyledInput
-              label="Password"
+              label="Пароль"
               placeholder="••••••••"
               value={password}
               onChangeText={setPassword}
@@ -136,33 +137,33 @@ export default function SignUpScreen() {
             />
 
             <StyledButton
-              title="Sign Up"
+              title="Зарегистрироваться"
               onPress={onSignUpPress}
               isLoading={loading}
             />
 
             <View style={styles.divider}>
               <View style={styles.line} />
-              <Text style={styles.dividerText}>Or register with</Text>
+              <Text style={styles.dividerText}>Или через</Text>
               <View style={styles.line} />
             </View>
 
             <SocialButton strategy="google" onPress={onGooglePress} />
 
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Already have an account? </Text>
+              <Text style={styles.footerText}>Уже есть аккаунт? </Text>
               <Link href="/sign-in" asChild>
-                <Text style={styles.link}>Sign In</Text>
+                <Text style={styles.link}>Войти</Text>
               </Link>
             </View>
           </View>
         ) : (
           <View style={styles.form}>
             <Text style={[styles.subtitle, { marginBottom: 20 }]}>
-              We&apos;ve sent a verification code to {emailAddress}
+              Мы отправили код подтверждения на {emailAddress}
             </Text>
             <StyledInput
-              label="Verification Code"
+              label="Код подтверждения"
               placeholder="123456"
               value={code}
               onChangeText={setCode}
@@ -171,7 +172,7 @@ export default function SignUpScreen() {
             />
 
             <StyledButton
-              title="Verify Email"
+              title="Подтвердить почту"
               onPress={onPressVerify}
               isLoading={loading}
             />
@@ -185,7 +186,7 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: Colors.background,
   },
   scrollContent: {
     flexGrow: 1,
@@ -204,12 +205,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "#1f2937",
+    color: Colors.text.primary,
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#6b7280",
+    color: Colors.text.secondary,
     textAlign: "center",
   },
   form: {
@@ -223,11 +224,11 @@ const styles = StyleSheet.create({
   line: {
     flex: 1,
     height: 1,
-    backgroundColor: "#e5e7eb",
+    backgroundColor: Colors.neutral[200],
   },
   dividerText: {
     marginHorizontal: 16,
-    color: "#9ca3af",
+    color: Colors.neutral[400],
     fontSize: 14,
   },
   footer: {
@@ -236,11 +237,11 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   footerText: {
-    color: "#6b7280",
+    color: Colors.text.secondary,
     fontSize: 14,
   },
   link: {
-    color: "#4f46e5",
+    color: Colors.primary[600],
     fontSize: 14,
     fontWeight: "600",
   },

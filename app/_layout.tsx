@@ -1,3 +1,4 @@
+import { UserProvider, useUserContext } from "@/context/UserContext";
 import { saveUser } from "@/services/userService";
 import { tokenCache } from "@/utils/cache";
 import {
@@ -9,29 +10,51 @@ import {
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
 
-const InitialLayout = () => {
+const AppRouting = () => {
   const { isLoaded, isSignedIn } = useAuth();
   const { user } = useUser();
   const segments = useSegments();
   const router = useRouter();
+  const { hasProfile, profileChecked } = useUserContext();
 
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    const inAuthGroup = segments[0] === "(auth)";
-
-    if (isSignedIn && inAuthGroup) {
-      router.replace("/");
-    } else if (!isSignedIn && !inAuthGroup) {
-      router.replace("/(auth)/sign-in");
-    }
-  }, [isSignedIn, isLoaded, segments, router]);
-
+  // Save user to Firestore on sign-in
   useEffect(() => {
     if (user) {
       saveUser(user);
     }
   }, [user]);
+
+  // Navigation logic
+  useEffect(() => {
+    if (!isLoaded || !profileChecked) return;
+
+    const inAuthGroup = segments[0] === "(auth)";
+    const inOnboarding = (segments[0] as string) === "onboarding";
+    const inGeneratingPlan = (segments[0] as string) === "generating-plan";
+
+    if (!isSignedIn) {
+      // Not signed in => go to auth
+      if (!inAuthGroup) {
+        router.replace("/(auth)/sign-in");
+      }
+    } else {
+      // Signed in
+      if (inAuthGroup) {
+        // Came from auth.
+        if (hasProfile) {
+          router.replace("/");
+        } else {
+          router.replace("/onboarding");
+        }
+      } else if (!inOnboarding && !inGeneratingPlan && !hasProfile) {
+        // Trying to access restricted area without completing onboarding
+        router.replace("/onboarding");
+      } else if ((inOnboarding || inGeneratingPlan) && hasProfile) {
+        // Trying to access onboarding when already completed
+        router.replace("/");
+      }
+    }
+  }, [isSignedIn, isLoaded, segments, router, profileChecked, hasProfile]);
 
   return <Slot />;
 };
@@ -48,7 +71,9 @@ export default function RootLayout() {
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
       <ClerkLoaded>
-        <InitialLayout />
+        <UserProvider>
+          <AppRouting />
+        </UserProvider>
       </ClerkLoaded>
     </ClerkProvider>
   );
