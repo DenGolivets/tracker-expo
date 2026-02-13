@@ -18,17 +18,90 @@ export const saveUser = async (user: any) => {
     };
 
     try {
-      await setDoc(userRef, data); // merge: true is default for setDoc? No, merge needs to be specified if we want update. But for new user it's fine.
+      await setDoc(userRef, data);
       console.log("User saved to Firestore");
     } catch (error) {
       console.error("Error saving user to Firestore:", error);
     }
   } else {
-    // Optional: Update last login
     try {
       await setDoc(userRef, { updatedAt: serverTimestamp() }, { merge: true });
     } catch (error) {
       console.error("Error updating user in Firestore:", error);
     }
+  }
+};
+
+export const getUserProfile = async (userId: string) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userRef);
+    if (userSnap.exists()) {
+      return userSnap.data();
+    }
+    return null;
+  } catch (error) {
+    console.error("Error getting user profile:", error);
+    return null;
+  }
+};
+
+// ... existing imports ...
+
+// ... saveUser and getUserProfile unchanged ...
+
+export const saveUserProfile = async (
+  userId: string,
+  profileData: any,
+  isCompleted: boolean = true,
+) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await setDoc(
+      userRef,
+      {
+        ...profileData,
+        onboardingCompleted: isCompleted,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+    console.log("User profile saved to Firestore");
+  } catch (error) {
+    console.error("Error saving user profile:", error);
+  }
+};
+
+export const saveUserPlan = async (userId: string, planData: any) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await setDoc(
+      userRef,
+      {
+        nutritionPlan: planData,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+    console.log("User plan saved to Firestore");
+  } catch (error) {
+    console.error("Error saving user plan:", error);
+  }
+};
+
+export const completeOnboarding = async (userId: string) => {
+  try {
+    const userRef = doc(db, "users", userId);
+    await setDoc(
+      userRef,
+      {
+        onboardingCompleted: true,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+    console.log("Onboarding marked as complete");
+  } catch (error) {
+    console.error("Error completing onboarding:", error);
   }
 };

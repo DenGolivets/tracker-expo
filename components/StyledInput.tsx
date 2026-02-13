@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
@@ -32,13 +33,13 @@ export const StyledInput: React.FC<StyledInputProps> = ({
           <Ionicons
             name={icon}
             size={20}
-            color={isFocused ? "#6366f1" : "#9ca3af"}
+            color={isFocused ? Colors.primary[500] : Colors.neutral[400]}
             style={styles.icon}
           />
         )}
         <TextInput
           style={styles.input}
-          placeholderTextColor="#9ca3af"
+          placeholderTextColor={Colors.neutral[400]}
           secureTextEntry={isPassword && !showPassword}
           {...props}
           onFocus={(e) => {
@@ -55,7 +56,7 @@ export const StyledInput: React.FC<StyledInputProps> = ({
             <Ionicons
               name={showPassword ? "eye-off" : "eye"}
               size={20}
-              color="#9ca3af"
+              color={Colors.neutral[400]}
             />
           </TouchableOpacity>
         )}
@@ -73,12 +74,12 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     fontSize: 14,
     fontWeight: "600",
-    color: "#374151",
+    color: Colors.text.primary,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#f3f4f6",
+    backgroundColor: Colors.neutral[100],
     borderRadius: 12,
     paddingHorizontal: 16,
     borderWidth: 1,
@@ -86,8 +87,8 @@ const styles = StyleSheet.create({
     height: 56,
   },
   inputFocused: {
-    borderColor: "#6366f1",
-    backgroundColor: "#fff",
+    borderColor: Colors.primary[500],
+    backgroundColor: Colors.background,
   },
   icon: {
     marginRight: 12,
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: "100%",
-    color: "#1f2937",
+    color: Colors.text.primary,
     fontSize: 16,
   },
 });

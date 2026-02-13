@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, ViewStyle } from "react-native";
@@ -31,11 +32,11 @@ export const SocialButton: React.FC<SocialButtonProps> = ({
   const getTitle = () => {
     switch (strategy) {
       case "google":
-        return "Continue with Google";
+        return "Продолжить через Google";
       case "apple":
-        return "Continue with Apple";
+        return "Продолжить через Apple";
       case "facebook":
-        return "Continue with Facebook";
+        return "Продолжить через Facebook";
     }
   };
 
@@ -48,7 +49,7 @@ export const SocialButton: React.FC<SocialButtonProps> = ({
       <Ionicons
         name={getIconName()}
         size={24}
-        color="#1f2937"
+        color={Colors.text.primary}
         style={styles.icon}
       />
       <Text style={styles.text}>{getTitle()}</Text>
@@ -63,9 +64,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#fff",
+    backgroundColor: Colors.background,
     borderWidth: 1,
-    borderColor: "#e5e7eb",
+    borderColor: Colors.neutral[200],
     borderRadius: 16,
     marginTop: 12,
   },
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   text: {
-    color: "#374151",
+    color: Colors.text.primary,
     fontSize: 16,
     fontWeight: "600",
   },

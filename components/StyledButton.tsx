@@ -1,3 +1,4 @@
+import { Colors } from "@/constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
@@ -32,7 +33,7 @@ export const StyledButton: React.FC<StyledButtonProps> = ({
         activeOpacity={0.8}
       >
         <LinearGradient
-          colors={["#6366f1", "#4f46e5"]}
+          colors={[Colors.primary[400], Colors.primary[600]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.gradient}
@@ -55,7 +56,7 @@ export const StyledButton: React.FC<StyledButtonProps> = ({
         style={[styles.container, styles.buttonOutline, style]}
       >
         {isLoading ? (
-          <ActivityIndicator color="#4f46e5" />
+          <ActivityIndicator color={Colors.primary[500]} />
         ) : (
           <Text style={styles.textOutline}>{title}</Text>
         )}
@@ -80,7 +81,6 @@ export const StyledButton: React.FC<StyledButtonProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
     height: 56,
     borderRadius: 16,
     overflow: "hidden",
@@ -93,33 +93,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonSecondary: {
-    backgroundColor: "#fff",
+    backgroundColor: Colors.background,
     borderWidth: 2,
-    borderColor: "#e5e7eb",
+    borderColor: Colors.neutral[200],
     justifyContent: "center",
     alignItems: "center",
   },
   buttonOutline: {
     backgroundColor: "transparent",
     borderWidth: 2,
-    borderColor: "#4f46e5",
+    borderColor: Colors.primary[500],
     justifyContent: "center",
     alignItems: "center",
   },
   textPrimary: {
-    color: "#fff",
+    color: Colors.text.inverted,
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.5,
   },
   textSecondary: {
-    color: "#374151",
+    color: Colors.text.primary,
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.5,
   },
   textOutline: {
-    color: "#4f46e5",
+    color: Colors.primary[500],
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.5,
