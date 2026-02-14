@@ -1,4 +1,14 @@
-import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  setDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "../config/firebaseConfig";
 
 export const saveUser = async (user: any) => {
@@ -103,6 +113,72 @@ export const completeOnboarding = async (userId: string) => {
     console.log("Onboarding marked as complete");
   } catch (error) {
     console.error("Error completing onboarding:", error);
+    throw error;
+  }
+};
+
+export const getDailyLogs = async (userId: string, date: string) => {
+  try {
+    const logsRef = collection(db, "users", userId, "logs");
+    const q = query(logsRef, where("date", "==", date));
+    const querySnapshot = await getDocs(q);
+    return querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+  } catch (error) {
+    console.error("Error getting daily logs:", error);
+    throw error;
+  }
+};
+
+export const addDailyLog = async (userId: string, logData: any) => {
+  try {
+    const logsRef = collection(db, "users", userId, "logs");
+    const docRef = await addDoc(logsRef, {
+      ...logData,
+      createdAt: serverTimestamp(),
+    });
+    console.log("Daily log added with ID:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error adding daily log:", error);
+    throw error;
+  }
+};
+
+export const getWaterIntake = async (userId: string, date: string) => {
+  try {
+    const waterRef = doc(db, "users", userId, "dailyStats", date);
+    const waterSnap = await getDoc(waterRef);
+    if (waterSnap.exists()) {
+      return waterSnap.data().waterIntake || 0;
+    }
+    return 0;
+  } catch (error) {
+    console.error("Error getting water intake:", error);
+    throw error;
+  }
+};
+
+export const updateWaterIntake = async (
+  userId: string,
+  date: string,
+  liters: number,
+) => {
+  try {
+    const waterRef = doc(db, "users", userId, "dailyStats", date);
+    await setDoc(
+      waterRef,
+      {
+        waterIntake: liters,
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+    console.log("Water intake updated");
+  } catch (error) {
+    console.error("Error updating water intake:", error);
     throw error;
   }
 };

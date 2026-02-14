@@ -36,6 +36,7 @@ export const Colors = {
   },
   background: "#ffffff",
   surface: "#ffffff",
+  transparent: "rgba(0, 0, 0, 0)",
   text: {
     primary: "#1f2937",
     secondary: "#6b7280",
