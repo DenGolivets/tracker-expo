@@ -45,7 +45,7 @@ export default function SignInScreen() {
       console.error(JSON.stringify(err, null, 2));
       Alert.alert(
         "Error",
-        err.errors ? err.errors[0].message : "Something went wrong",
+        err.errors ? err.errors[0].message : "Щось пішло не так",
       );
     } finally {
       setLoading(false);
@@ -61,16 +61,16 @@ export default function SignInScreen() {
       } else {
         setIsGoogleLoading(false);
         Alert.alert(
-          "Sign In Header",
-          "Google sign-in was cancelled or failed. Please try again.",
+          "Вхід",
+          "Вхід через Google було скасовано або сталася помилка. Будь ласка, спробуйте ще раз.",
         );
       }
     } catch (err: any) {
       setIsGoogleLoading(false);
       console.error("OAuth error", err);
       Alert.alert(
-        "Error",
-        "An unexpected error occurred during Google sign-in.",
+        "Помилка",
+        "Сталася непередбачена помилка при вході через Google.",
       );
     } finally {
       setIsGoogleLoading(false);
@@ -89,15 +89,15 @@ export default function SignInScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.title}>С возвращением!</Text>
+          <Text style={styles.title}>З поверненням!</Text>
           <Text style={styles.subtitle}>
-            Войдите, чтобы продолжить путь к цели
+            Увійдіть, щоб продовжити шлях до мети
           </Text>
         </View>
 
         <View style={styles.form}>
           <StyledInput
-            label="Электронная почта"
+            label="Електронна пошта"
             placeholder="hello@example.com"
             value={emailAddress}
             onChangeText={setEmailAddress}
@@ -116,14 +116,14 @@ export default function SignInScreen() {
           />
 
           <StyledButton
-            title="Войти"
+            title="Увійти"
             onPress={onSignInPress}
             isLoading={loading}
           />
 
           <View style={styles.divider}>
             <View style={styles.line} />
-            <Text style={styles.dividerText}>Или через</Text>
+            <Text style={styles.dividerText}>Або через</Text>
             <View style={styles.line} />
           </View>
 
@@ -134,9 +134,9 @@ export default function SignInScreen() {
           />
 
           <View style={styles.footer}>
-            <Text style={styles.footerText}>Нет аккаунта? </Text>
+            <Text style={styles.footerText}>Немає акаунту? </Text>
             <Link href="/sign-up" asChild>
-              <Text style={styles.link}>Зарегистрироваться</Text>
+              <Text style={styles.link}>Зареєструватися</Text>
             </Link>
           </View>
         </View>

@@ -46,8 +46,8 @@ export default function SignUpScreen() {
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
       Alert.alert(
-        "Error",
-        err.errors ? err.errors[0].message : "Something went wrong",
+        "Помилка",
+        err.errors ? err.errors[0].message : "Щось пішло не так",
       );
     } finally {
       setLoading(false);
@@ -71,8 +71,8 @@ export default function SignUpScreen() {
     } catch (err: any) {
       console.error(JSON.stringify(err, null, 2));
       Alert.alert(
-        "Error",
-        err.errors ? err.errors[0].message : "Something went wrong",
+        "Помилка",
+        err.errors ? err.errors[0].message : "Щось пішло не так",
       );
     } finally {
       setLoading(false);
@@ -86,15 +86,15 @@ export default function SignUpScreen() {
         await setActive({ session: createdSessionId });
       } else if (!createdSessionId) {
         Alert.alert(
-          "Sign Up Header",
-          "Google sign-up was cancelled or failed. Please try again.",
+          "Реєстрація",
+          "Реєстрація через Google була скасована або сталася помилка. Будь ласка, спробуйте ще раз.",
         );
       }
     } catch (err: any) {
       console.error("OAuth error", err);
       Alert.alert(
-        "Error",
-        "An unexpected error occurred during Google sign-up. Please try again later.",
+        "Помилка",
+        "Сталася непередбачена помилка при реєстрації через Google. Будь ласка, спробуйте пізніше.",
       );
     }
   };
@@ -111,14 +111,14 @@ export default function SignUpScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.title}>Создать аккаунт</Text>
-          <Text style={styles.subtitle}>Начните свой путь с нами сегодня</Text>
+          <Text style={styles.title}>Створити акаунт</Text>
+          <Text style={styles.subtitle}>Почніть свій шлях з нами сьогодні</Text>
         </View>
 
         {!pendingVerification ? (
           <View style={styles.form}>
             <StyledInput
-              label="Электронная почта"
+              label="Електронна пошта"
               placeholder="hello@example.com"
               value={emailAddress}
               onChangeText={setEmailAddress}
@@ -137,33 +137,33 @@ export default function SignUpScreen() {
             />
 
             <StyledButton
-              title="Зарегистрироваться"
+              title="Зареєструватися"
               onPress={onSignUpPress}
               isLoading={loading}
             />
 
             <View style={styles.divider}>
               <View style={styles.line} />
-              <Text style={styles.dividerText}>Или через</Text>
+              <Text style={styles.dividerText}>Або через</Text>
               <View style={styles.line} />
             </View>
 
             <SocialButton strategy="google" onPress={onGooglePress} />
 
             <View style={styles.footer}>
-              <Text style={styles.footerText}>Уже есть аккаунт? </Text>
+              <Text style={styles.footerText}>Вже є акаунт? </Text>
               <Link href="/sign-in" asChild>
-                <Text style={styles.link}>Войти</Text>
+                <Text style={styles.link}>Увійти</Text>
               </Link>
             </View>
           </View>
         ) : (
           <View style={styles.form}>
             <Text style={[styles.subtitle, { marginBottom: 20 }]}>
-              Мы отправили код подтверждения на {emailAddress}
+              Ми відправили код підтвердження на {emailAddress}
             </Text>
             <StyledInput
-              label="Код подтверждения"
+              label="Код підтвердження"
               placeholder="123456"
               value={code}
               onChangeText={setCode}
@@ -172,7 +172,7 @@ export default function SignUpScreen() {
             />
 
             <StyledButton
-              title="Подтвердить почту"
+              title="Підтвердити пошту"
               onPress={onPressVerify}
               isLoading={loading}
             />

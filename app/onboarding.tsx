@@ -127,20 +127,23 @@ export default function OnboardingScreen() {
 
   const handleNext = () => {
     if (currentStep === 1 && !gender) {
-      Alert.alert("Обязательно", "Пожалуйста, выберите ваш пол.");
+      Alert.alert("Обов'язково", "Будь ласка, оберіть вашу стать.");
       return;
     }
     if (currentStep === 2 && !goal) {
-      Alert.alert("Обязательно", "Пожалуйста, выберите вашу цель.");
+      Alert.alert("Обов'язково", "Будь ласка, оберіть вашу мету.");
       return;
     }
     if (currentStep === 3) {
       if (!workoutFrequency) {
-        Alert.alert("Обязательно", "Пожалуйста, выберите частоту тренировок.");
+        Alert.alert("Обов'язково", "Будь ласка, оберіть частоту тренувань.");
         return;
       }
       if (!birthDay || !birthMonth || !birthYear) {
-        Alert.alert("Обязательно", "Пожалуйста, введите полную дату рождения.");
+        Alert.alert(
+          "Обов'язково",
+          "Будь ласка, введіть повну дату народження.",
+        );
         return;
       }
 
@@ -170,7 +173,7 @@ export default function OnboardingScreen() {
         year > currentYear ||
         !isValidDate(day, month, year)
       ) {
-        Alert.alert("Ошибка", "Пожалуйста, введите корректную дату рождения.");
+        Alert.alert("Помилка", "Будь ласка, введіть коректну дату народження.");
         return;
       }
     }
@@ -188,12 +191,12 @@ export default function OnboardingScreen() {
         hFeet <= 0 ||
         wKg <= 0
       ) {
-        Alert.alert("Ошибка", "Пожалуйста, введите корректные рост и вес.");
+        Alert.alert("Помилка", "Будь ласка, введіть коректні зріст та вагу.");
         return;
       }
 
       if (hFeet > 10 || wKg > 500) {
-        Alert.alert("Ошибка", "Пожалуйста, введите реалистичные параметры.");
+        Alert.alert("Помилка", "Будь ласка, введіть реалістичні параметри.");
         return;
       }
     }
@@ -235,8 +238,8 @@ export default function OnboardingScreen() {
     } catch (error) {
       console.error("Error saving profile:", error);
       Alert.alert(
-        "Ошибка",
-        "Не удалось сохранить профиль. Пожалуйста, попробуйте снова.",
+        "Помилка",
+        "Не вдалося зберегти профіль. Будь ласка, спробуйте ще раз.",
       );
     }
   };
@@ -244,13 +247,13 @@ export default function OnboardingScreen() {
   const getStepTitle = () => {
     switch (currentStep) {
       case 1:
-        return "Ваш пол?";
+        return "Ваша стать?";
       case 2:
-        return "Ваша цель?";
+        return "Ваша мета?";
       case 3:
-        return "Активность и возраст";
+        return "Активність та вік";
       case 4:
-        return "Параметры тела";
+        return "Параметри тіла";
       default:
         return "";
     }
@@ -259,13 +262,13 @@ export default function OnboardingScreen() {
   const getStepSubtitle = () => {
     switch (currentStep) {
       case 1:
-        return "Помогите нам персонализировать ваш опыт";
+        return "Допоможіть нам персоналізувати ваш досвід";
       case 2:
-        return "Мы подберем план специально для вас";
+        return "Ми підберемо план спеціально для вас";
       case 3:
-        return "Помогите рассчитать ваши потребности";
+        return "Допоможіть розрахувати ваші потреби";
       case 4:
-        return "Почти готово! Введите ваши измерения";
+        return "Майже готово! Введіть ваші виміри";
       default:
         return "";
     }
@@ -276,13 +279,13 @@ export default function OnboardingScreen() {
     <View style={styles.optionsRow}>
       <OptionCard
         icon={Male02Icon}
-        label="Мужской"
+        label="Чоловіча"
         selected={gender === "male"}
         onPress={() => setGender("male")}
       />
       <OptionCard
         icon={Female02Icon}
-        label="Женский"
+        label="Жіноча"
         selected={gender === "female"}
         onPress={() => setGender("female")}
       />
@@ -293,22 +296,22 @@ export default function OnboardingScreen() {
     <View style={styles.optionsColumn}>
       <OptionCard
         icon={BodyPartMuscleIcon}
-        label="Набрать вес"
-        sublabel="Нарастить мышцы и массу"
+        label="Набрати вагу"
+        sublabel="Наростити м'язи та масу"
         selected={goal === "gain"}
         onPress={() => setGoal("gain")}
       />
       <OptionCard
         icon={RunningShoesIcon}
-        label="Похудеть"
-        sublabel="Сжечь жир и стать стройнее"
+        label="Схуднути"
+        sublabel="Спалити жир та стати стрункішим"
         selected={goal === "lose"}
         onPress={() => setGoal("lose")}
       />
       <OptionCard
         icon={Target02Icon}
-        label="Поддержание"
-        sublabel="Быть в форме и здоровым"
+        label="Підтримка"
+        sublabel="Бути у формі та здоровим"
         selected={goal === "maintain"}
         onPress={() => setGoal("maintain")}
       />
@@ -324,7 +327,7 @@ export default function OnboardingScreen() {
           size={18}
           color={Colors.primary[500]}
         />{" "}
-        Частота тренировок
+        Частота тренувань
       </Text>
       <View style={styles.optionsRow}>
         {(["2-3", "3-4", "5-6"] as WorkoutFrequency[]).map((freq) => (
@@ -350,7 +353,7 @@ export default function OnboardingScreen() {
                 workoutFrequency === freq && styles.freqLabelSelected,
               ]}
             >
-              дней/нед
+              днів/тиж
             </Text>
           </TouchableOpacity>
         ))}
@@ -363,14 +366,14 @@ export default function OnboardingScreen() {
           size={18}
           color={Colors.primary[500]}
         />{" "}
-        Дата рождения
+        Дата народження
       </Text>
       <View style={styles.dateRow}>
         <View style={styles.dateField}>
           <Text style={styles.dateLabel}>День</Text>
           <TextInput
             style={styles.dateInput}
-            placeholder="DD"
+            placeholder="ДД"
             placeholderTextColor={Colors.neutral[400]}
             keyboardType="numeric"
             maxLength={2}
@@ -379,10 +382,10 @@ export default function OnboardingScreen() {
           />
         </View>
         <View style={styles.dateField}>
-          <Text style={styles.dateLabel}>Месяц</Text>
+          <Text style={styles.dateLabel}>Місяць</Text>
           <TextInput
             style={styles.dateInput}
-            placeholder="MM"
+            placeholder="ММ"
             placeholderTextColor={Colors.neutral[400]}
             keyboardType="numeric"
             maxLength={2}
@@ -391,10 +394,10 @@ export default function OnboardingScreen() {
           />
         </View>
         <View style={styles.datFieldYear}>
-          <Text style={styles.dateLabel}>Год</Text>
+          <Text style={styles.dateLabel}>Рік</Text>
           <TextInput
             style={styles.dateInput}
-            placeholder="ГГГГ"
+            placeholder="РРРР"
             placeholderTextColor={Colors.neutral[400]}
             keyboardType="numeric"
             maxLength={4}
@@ -415,7 +418,7 @@ export default function OnboardingScreen() {
           size={18}
           color={Colors.primary[500]}
         />{" "}
-        Рост
+        Зріст
       </Text>
       <View style={styles.metricsRow}>
         <View style={styles.metricField}>
@@ -451,7 +454,7 @@ export default function OnboardingScreen() {
           size={18}
           color={Colors.primary[500]}
         />{" "}
-        Вес
+        Вага
       </Text>
       <View style={styles.metricsRow}>
         <View style={[styles.metricField, { flex: 1 }]}>
@@ -512,7 +515,7 @@ export default function OnboardingScreen() {
           />
         )}
         <StyledButton
-          title={currentStep === TOTAL_STEPS ? "Готово" : "Далее"}
+          title={currentStep === TOTAL_STEPS ? "Готово" : "Далі"}
           onPress={handleNext}
           style={{ flex: 1 }}
         />

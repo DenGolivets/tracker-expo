@@ -21,31 +21,31 @@ export const generateNutritionPlan = async (
   try {
     if (!API_KEY) {
       throw new Error(
-        "API ключ отсутствует. Пожалуйста, добавьте EXPO_PUBLIC_GROQ_API_KEY в ваш файл .env и перезапустите сервер.",
+        "API ключ відсутній. Будь ласка, додайте EXPO_PUBLIC_GROQ_API_KEY у ваш файл .env та перезапустіть сервер.",
       );
     }
 
     const prompt = `
-      Сгенерируй персонализированный план питания на основе следующих данных пользователя:
-      - Пол: ${userData.gender}
-      - Цель: ${userData.goal}
-      - Частота тренировок: ${userData.workoutFrequency} дней в неделю
-      - Рост: ${userData.heightFeet}фт ${userData.heightInches}дюймов
-      - Вес: ${userData.weightKg}кг
-      - Дата рождения: ${userData.birthdate}
+      Згенеруй персоналізований план харчування на основі наступних даних користувача:
+      - Стать: ${userData.gender}
+      - Мета: ${userData.goal}
+      - Частота тренувань: ${userData.workoutFrequency} днів на тиждень
+      - Зріст: ${userData.heightFeet}фт ${userData.heightInches}дюймів
+      - Вага: ${userData.weightKg}кг
+      - Дата народження: ${userData.birthdate}
 
-      Пожалуйста, предоставь ответ в валидном формате JSON со следующей структурой (все текстовые поля должны быть на русском языке):
+      Будь ласка, надай відповідь у валідному форматі JSON з наступною структурою (всі текстові поля мають бути українською мовою):
       {
         "dailyCalories": number,
         "macros": {
-          "protein": "строка (например, 150г)",
-          "carbs": "строка (например, 200г)",
-          "fats": "строка (например, 70г)"
+          "protein": "рядок (наприклад, 150г)",
+          "carbs": "рядок (наприклад, 200г)",
+          "fats": "рядок (наприклад, 70г)"
         },
-        "waterIntake": "строка (например, 3 литра)",
-        "advice": "строка (краткий совет по питанию на основе цели)"
+        "waterIntake": "рядок (наприклад, 3 літри)",
+        "advice": "рядок (коротка порада щодо харчування на основі мети)"
       }
-      Не включай markdown форматирование, такое как \`\`\`json. Только "сырой" JSON объект.
+      Не включай markdown форматування, таке як \`\`\`json. Тільки "сирий" JSON об'єкт.
     `;
 
     const response = await fetch(
@@ -72,20 +72,20 @@ export const generateNutritionPlan = async (
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Ошибка API Groq: ${response.status} - ${errorText}`);
+      throw new Error(`Помилка API Groq: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
     const content = data.choices[0]?.message?.content;
 
     if (!content) {
-      throw new Error("Не получен контент от API Groq");
+      throw new Error("Не отримано контент від API Groq");
     }
 
     const plan: NutritionPlan = JSON.parse(content);
     return plan;
   } catch (error: any) {
-    console.error("Ошибка генерации плана питания:", error);
+    console.error("Помилка генерації плану харчування:", error);
     throw error; // Re-throw the error so the UI can display it
   }
 };

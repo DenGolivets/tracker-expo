@@ -1,4 +1,8 @@
+import { ActionMenuModal } from "@/components/ActionMenuModal";
+import { WaterIntakeModal } from "@/components/WaterIntakeModal";
 import { Colors } from "@/constants/Colors";
+import { updateWaterIntake } from "@/services/userService";
+import { useUser } from "@clerk/clerk-expo";
 import {
   Add01Icon,
   ChartBreakoutSquareIcon,
@@ -7,7 +11,7 @@ import {
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { Tabs, usePathname } from "expo-router";
-import React from "react";
+import React, { useState } from "react";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const CustomTabButton = (props: any) => {
@@ -33,100 +37,135 @@ const CustomTabButton = (props: any) => {
 
 export default function TabsLayout() {
   const pathname = usePathname();
+  const { user } = useUser();
+  const [isActionMenuVisible, setIsActionMenuVisible] = useState(false);
+  const [isWaterModalVisible, setIsWaterModalVisible] = useState(false);
+
+  const handleUpdateWater = async (liters: number) => {
+    if (!user?.id) return;
+    const dateString = new Date().toISOString().split("T")[0];
+    try {
+      await updateWaterIntake(user.id, dateString, liters);
+      // We might need a global refresh mechanism eventually,
+      // but for now we update the DB.
+    } catch (error) {
+      console.error("Error updating water globally:", error);
+      throw error;
+    }
+  };
+
+  const handleAction = (actionId: string) => {
+    if (actionId === "add-water") {
+      setIsWaterModalVisible(true);
+    }
+    // Handle other global actions here
+  };
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarShowLabel: false,
-      }}
-    >
-      <Tabs.Screen
-        name="index"
-        options={{
-          tabBarButton: (props) => (
-            <CustomTabButton {...props}>
-              <HugeiconsIcon
-                icon={Home01Icon}
-                strokeWidth={2}
-                size={28}
-                color={
-                  pathname === "/" || pathname === "/index"
-                    ? Colors.primary[500]
-                    : Colors.neutral[400]
-                }
-              />
-            </CustomTabButton>
-          ),
+    <>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: styles.tabBar,
+          tabBarShowLabel: false,
         }}
-      />
-      <Tabs.Screen
-        name="analytics"
-        options={{
-          tabBarButton: (props) => (
-            <CustomTabButton {...props}>
-              <HugeiconsIcon
-                icon={ChartBreakoutSquareIcon}
-                strokeWidth={2}
-                size={28}
-                color={
-                  pathname === "/analytics"
-                    ? Colors.primary[500]
-                    : Colors.neutral[400]
-                }
-              />
-            </CustomTabButton>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          tabBarButton: (props) => (
-            <CustomTabButton {...props}>
-              <HugeiconsIcon
-                icon={UserIcon}
-                strokeWidth={2}
-                size={28}
-                color={
-                  pathname === "/profile"
-                    ? Colors.primary[500]
-                    : Colors.neutral[400]
-                }
-              />
-            </CustomTabButton>
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="add"
-        options={{
-          tabBarButton: (props) => {
-            const { delayLongPress, disabled, ...rest } = props;
-            const { hoverEffect, ...sanitizedRest } = rest as any;
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            tabBarButton: (props) => (
+              <CustomTabButton {...props}>
+                <HugeiconsIcon
+                  icon={Home01Icon}
+                  strokeWidth={2}
+                  size={28}
+                  color={
+                    pathname === "/" || pathname === "/index"
+                      ? Colors.primary[500]
+                      : Colors.neutral[400]
+                  }
+                />
+              </CustomTabButton>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="analytics"
+          options={{
+            tabBarButton: (props) => (
+              <CustomTabButton {...props}>
+                <HugeiconsIcon
+                  icon={ChartBreakoutSquareIcon}
+                  strokeWidth={2}
+                  size={28}
+                  color={
+                    pathname === "/analytics"
+                      ? Colors.primary[500]
+                      : Colors.neutral[400]
+                  }
+                />
+              </CustomTabButton>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="profile"
+          options={{
+            tabBarButton: (props) => (
+              <CustomTabButton {...props}>
+                <HugeiconsIcon
+                  icon={UserIcon}
+                  strokeWidth={2}
+                  size={28}
+                  color={
+                    pathname === "/profile"
+                      ? Colors.primary[500]
+                      : Colors.neutral[400]
+                  }
+                />
+              </CustomTabButton>
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="add"
+          options={{
+            tabBarButton: (props) => {
+              const { delayLongPress, disabled, ...rest } = props;
+              const { hoverEffect, ...sanitizedRest } = rest as any;
 
-            return (
-              <TouchableOpacity
-                {...sanitizedRest}
-                disabled={disabled ?? undefined}
-                delayLongPress={delayLongPress ?? undefined}
-                style={styles.fabButton}
-                activeOpacity={0.8}
-                onPress={(e) => {
-                  props.onPress?.(e);
-                  console.log("Add button pressed");
-                }}
-              >
-                <View style={styles.fabContent}>
-                  <HugeiconsIcon icon={Add01Icon} size={28} color="#fff" />
-                </View>
-              </TouchableOpacity>
-            );
-          },
-        }}
+              return (
+                <TouchableOpacity
+                  {...sanitizedRest}
+                  disabled={disabled ?? undefined}
+                  delayLongPress={delayLongPress ?? undefined}
+                  style={styles.fabButton}
+                  activeOpacity={0.8}
+                  onPress={() => {
+                    setIsActionMenuVisible(true);
+                  }}
+                >
+                  <View style={styles.fabContent}>
+                    <HugeiconsIcon icon={Add01Icon} size={28} color="#fff" />
+                  </View>
+                </TouchableOpacity>
+              );
+            },
+          }}
+        />
+      </Tabs>
+      <ActionMenuModal
+        isVisible={isActionMenuVisible}
+        onClose={() => setIsActionMenuVisible(false)}
+        onAction={handleAction}
       />
-    </Tabs>
+      <WaterIntakeModal
+        isVisible={isWaterModalVisible}
+        onClose={() => setIsWaterModalVisible(false)}
+        onSave={handleUpdateWater}
+        initialValue={0} // Default to adding fresh water
+      />
+    </>
   );
 }
 

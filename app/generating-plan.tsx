@@ -24,10 +24,10 @@ interface Step {
 }
 
 const INITIAL_STEPS: Step[] = [
-  { id: 1, label: "Анализ физических параметров", status: "pending" },
-  { id: 2, label: "Расчет суточной нормы калорий", status: "pending" },
-  { id: 3, label: "Генерация плана питания через AI", status: "pending" },
-  { id: 4, label: "Сохранение персонального плана", status: "pending" },
+  { id: 1, label: "Аналіз фізичних параметрів", status: "pending" },
+  { id: 2, label: "Розрахунок добової норми калорій", status: "pending" },
+  { id: 3, label: "Генерація плану харчування через AI", status: "pending" },
+  { id: 4, label: "Збереження персонального плану", status: "pending" },
 ];
 
 export default function GeneratingPlanScreen() {
@@ -67,12 +67,12 @@ export default function GeneratingPlanScreen() {
       // --- Step 3: AI Generation (REAL) ---
       updateStepStatus(3, "loading");
       const profileData = await getUserProfile(user.id);
-      if (!profileData) throw new Error("Профиль пользователя не найден");
+      if (!profileData) throw new Error("Профіль користувача не знайдено");
 
       const plan = await generateNutritionPlan(profileData);
       if (!plan)
         throw new Error(
-          "Не удалось создать план. Пожалуйста, попробуйте снова.",
+          "Не вдалося створити план. Будь ласка, спробуйте ще раз.",
         );
       updateStepStatus(3, "completed");
 
@@ -85,7 +85,7 @@ export default function GeneratingPlanScreen() {
       } catch (saveError: any) {
         console.error("Error in Step 4 (Save/Complete):", saveError);
         throw new Error(
-          `Ошибка сохранения плана: ${saveError.message || "пожалуйста, проверьте интернет-соединение"}`,
+          `Помилка збереження плану: ${saveError.message || "будь ласка, перевірте інтернет-з'єднання"}`,
         );
       }
 
@@ -95,7 +95,7 @@ export default function GeneratingPlanScreen() {
       router.replace("/");
     } catch (err: any) {
       console.error("Generation error:", err);
-      setError(err.message || "Произошла непредвиденная ошибка");
+      setError(err.message || "Сталася непередбачена помилка");
       setIsGenerating(false);
     }
   }, [user, refreshProfile, router]);
@@ -148,9 +148,9 @@ export default function GeneratingPlanScreen() {
                 <View style={styles.loaderCircle}>
                   <ActivityIndicator size="large" color={Colors.primary[500]} />
                 </View>
-                <Text style={styles.titleText}>Создаем ваш план</Text>
+                <Text style={styles.titleText}>Створюємо твій план</Text>
                 <Text style={styles.subtitleText}>
-                  Это займет около 10-15 секунд
+                  Це займе близько 10-15 секунд
                 </Text>
               </View>
 
@@ -166,10 +166,10 @@ export default function GeneratingPlanScreen() {
               >
                 <Text style={{ fontSize: 40 }}>⚠️</Text>
               </View>
-              <Text style={styles.errorTitle}>Ошибка генерации</Text>
+              <Text style={styles.errorTitle}>Помилка генерації</Text>
               <Text style={styles.errorText}>{error}</Text>
               <StyledButton
-                title="Попробовать снова"
+                title="Спробувати ще раз"
                 onPress={startGeneration}
                 style={{ marginTop: 24, width: 200 }}
               />
