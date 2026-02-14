@@ -24,6 +24,7 @@ const CustomTabButton = (props: any) => {
       delayLongPress={delayLongPress}
       style={[style, styles.tabBarItem]}
       activeOpacity={0.7}
+      hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
     >
       {children}
     </TouchableOpacity>
