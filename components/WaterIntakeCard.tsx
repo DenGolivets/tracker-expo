@@ -17,8 +17,8 @@ export const WaterIntakeCard: React.FC<WaterIntakeCardProps> = ({
   target,
   onEdit,
 }) => {
-  const oneGlassValue = target / MAX_GLASSES;
-  const consumedGlasses = consumed / oneGlassValue;
+  const oneGlassValue = target > 0 ? target / MAX_GLASSES : 0;
+  const consumedGlasses = oneGlassValue > 0 ? consumed / oneGlassValue : 0;
   const remainingGlasses = Math.max(
     0,
     MAX_GLASSES - Math.floor(consumedGlasses),
