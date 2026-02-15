@@ -10,7 +10,7 @@ import {
   UserIcon,
 } from "@hugeicons/core-free-icons";
 import { HugeiconsIcon } from "@hugeicons/react-native";
-import { Tabs, usePathname } from "expo-router";
+import { Tabs, usePathname, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Platform, StyleSheet, TouchableOpacity, View } from "react-native";
 
@@ -37,6 +37,7 @@ const CustomTabButton = (props: any) => {
 
 export default function TabsLayout() {
   const pathname = usePathname();
+  const router = useRouter();
   const { user } = useUser();
   const [isActionMenuVisible, setIsActionMenuVisible] = useState(false);
   const [isWaterModalVisible, setIsWaterModalVisible] = useState(false);
@@ -57,6 +58,8 @@ export default function TabsLayout() {
   const handleAction = (actionId: string) => {
     if (actionId === "add-water") {
       setIsWaterModalVisible(true);
+    } else if (actionId === "log-exercise") {
+      router.push("/log-exercise");
     }
     // Handle other global actions here
   };

@@ -67,20 +67,36 @@ export const useDailyStats = (date: Date) => {
         getWaterIntake(user.id, dateString),
       ]);
 
-      const consumed = logs.reduce(
-        (acc, log: any) => ({
-          calories: acc.calories + (parseMacro(log.calories) || 0),
-          protein: acc.protein + (parseMacro(log.protein) || 0),
-          fats: acc.fats + (parseMacro(log.fats) || 0),
-          carbs: acc.carbs + (parseMacro(log.carbs) || 0),
-        }),
-        { calories: 0, protein: 0, fats: 0, carbs: 0 },
+      const totals = logs.reduce(
+        (acc, log: any) => {
+          const isExercise = log.type === "exercise";
+          const calories = parseMacro(log.calories) || 0;
+
+          if (isExercise) {
+            return {
+              ...acc,
+              burned: acc.burned + calories,
+            };
+          } else {
+            return {
+              ...acc,
+              consumed: acc.consumed + calories,
+              protein: acc.protein + (parseMacro(log.protein) || 0),
+              fats: acc.fats + (parseMacro(log.fats) || 0),
+              carbs: acc.carbs + (parseMacro(log.carbs) || 0),
+            };
+          }
+        },
+        { consumed: 0, burned: 0, protein: 0, fats: 0, carbs: 0 },
       );
 
       setStats({
         targetCalories: targets.calories,
-        consumedCalories: consumed.calories,
-        remainingCalories: Math.max(0, targets.calories - consumed.calories),
+        consumedCalories: totals.consumed,
+        remainingCalories: Math.max(
+          0,
+          targets.calories + totals.burned - totals.consumed,
+        ),
         targetWater: targets.water,
         consumedWater: waterIntake,
         targets: {
@@ -89,9 +105,9 @@ export const useDailyStats = (date: Date) => {
           carbs: targets.carbs,
         },
         consumed: {
-          protein: consumed.protein,
-          fats: consumed.fats,
-          carbs: consumed.carbs,
+          protein: totals.protein,
+          fats: totals.fats,
+          carbs: totals.carbs,
         },
         logs: logs,
         isLoading: false,
