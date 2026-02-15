@@ -8,6 +8,7 @@ type Props = {
   remaining: number;
   target: number;
   consumed: number;
+  burned: number;
   proteinRemaining: number;
   fatsRemaining: number;
   carbsRemaining: number;
@@ -18,12 +19,16 @@ export function RemainingCaloriesCard({
   remaining,
   target,
   consumed,
+  burned,
   proteinRemaining,
   fatsRemaining,
   carbsRemaining,
   onEdit,
 }: Props) {
-  const progress = Math.min(Math.max((consumed || 0) / (target || 2000), 0), 1);
+  const progress = Math.min(
+    Math.max(((consumed || 0) - (burned || 0)) / (target || 2000), 0),
+    1,
+  );
 
   return (
     <View style={styles.card}>
@@ -32,6 +37,23 @@ export function RemainingCaloriesCard({
         <TouchableOpacity onPress={onEdit} style={styles.editButton}>
           <Feather name="edit" size={24} color={Colors.primary[500]} />
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.mathRow}>
+        <View style={styles.mathItem}>
+          <Text style={styles.mathValue}>{target}</Text>
+          <Text style={styles.mathLabel}>Ціль</Text>
+        </View>
+        <Text style={styles.mathOperator}>−</Text>
+        <View style={styles.mathItem}>
+          <Text style={styles.mathValue}>{consumed}</Text>
+          <Text style={styles.mathLabel}>Їжа</Text>
+        </View>
+        <Text style={styles.mathOperator}>+</Text>
+        <View style={styles.mathItem}>
+          <Text style={styles.mathValue}>{burned}</Text>
+          <Text style={styles.mathLabel}>Вправи</Text>
+        </View>
       </View>
 
       <View style={styles.content}>
@@ -53,7 +75,9 @@ export function RemainingCaloriesCard({
             size={28}
             color={Colors.semantic.info}
           />
-          <Text style={styles.macroValue}>{proteinRemaining}г</Text>
+          <Text style={styles.macroValue}>
+            {(proteinRemaining || 0).toFixed(1)}г
+          </Text>
           <Text style={styles.macroLabel}>Білків залишилось</Text>
         </View>
         <View style={styles.macroCard}>
@@ -62,7 +86,9 @@ export function RemainingCaloriesCard({
             size={28}
             color={Colors.semantic.warning}
           />
-          <Text style={styles.macroValue}>{fatsRemaining}г</Text>
+          <Text style={styles.macroValue}>
+            {(fatsRemaining || 0).toFixed(1)}г
+          </Text>
           <Text style={styles.macroLabel}>Жирів залишилось</Text>
         </View>
         <View style={styles.macroCard}>
@@ -71,7 +97,9 @@ export function RemainingCaloriesCard({
             size={28}
             color={Colors.semantic.success}
           />
-          <Text style={styles.macroValue}>{carbsRemaining}г</Text>
+          <Text style={styles.macroValue}>
+            {(carbsRemaining || 0).toFixed(1)}г
+          </Text>
           <Text style={styles.macroLabel}>Вуглеводів залишилось</Text>
         </View>
       </View>
@@ -109,6 +137,32 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingBottom: 20,
+  },
+  mathRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 24,
+    paddingHorizontal: 10,
+  },
+  mathItem: {
+    alignItems: "center",
+    gap: 4,
+  },
+  mathValue: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: Colors.text.primary,
+  },
+  mathLabel: {
+    fontSize: 12,
+    color: Colors.text.secondary,
+  },
+  mathOperator: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: Colors.text.muted,
+    marginTop: -16,
   },
   macrosContainer: {
     flexDirection: "row",
