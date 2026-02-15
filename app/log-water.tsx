@@ -1,6 +1,11 @@
 import { StyledButton } from "@/components/StyledButton";
 import { Colors } from "@/constants/Colors";
-import { getWaterIntake, updateWaterIntake } from "@/services/userService";
+import {
+  getUserProfile,
+  getWaterIntake,
+  updateWaterIntake,
+} from "@/services/userService";
+import { parseMacro } from "@/utils/macroUtils";
 import { useUser } from "@clerk/clerk-expo";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -12,6 +17,7 @@ import { HugeiconsIcon } from "@hugeicons/react-native";
 import { useRouter } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Image,
   Platform,
   StyleSheet,
@@ -23,39 +29,51 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const GLASS_CAPACITY = 250; // 250ml per glass
 const INCREMENT = 125; // 0.5 glass = 125ml
-const MAX_GLASSES = 4;
-const MAX_WATER = MAX_GLASSES * GLASS_CAPACITY; // 1000ml
+const SESSION_MAX = 5000; // Absolute safety cap (5L)
 
 export default function LogWaterScreen() {
   const router = useRouter();
   const { user } = useUser();
   const [waterAmount, setWaterAmount] = useState(0); // The amount being added in this session
   const [dbTotal, setDbTotal] = useState(0); // The current total from database
+  const [dailyTarget, setDailyTarget] = useState(2000); // Daily target in ml
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    const fetchCurrentWater = async () => {
+    const fetchData = async () => {
       if (!user?.id) return;
       setIsLoading(true);
       const dateString = new Date().toISOString().split("T")[0];
       try {
-        const amount = await getWaterIntake(user.id, dateString);
+        const [amount, profile] = await Promise.all([
+          getWaterIntake(user.id, dateString),
+          getUserProfile(user.id),
+        ]);
+
         setDbTotal(Math.round(amount * 1000));
+
+        if (profile?.nutritionPlan?.waterIntake) {
+          const targetInLiters = parseMacro(profile.nutritionPlan.waterIntake);
+          setDailyTarget(Math.round(targetInLiters * 1000));
+        }
       } catch (error) {
-        console.error("Error fetching water:", error);
+        console.error("Error fetching water data:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchCurrentWater();
+    fetchData();
   }, [user?.id]);
 
+  // Use the larger of target or current intake to allow logging over target if needed,
+  // but the user's prompt suggests a capping logic. Let's use dailyTarget as the baseline cap.
+  const effectiveMaxTarget = dailyTarget > 0 ? dailyTarget : SESSION_MAX;
+  const isAtLimit = dbTotal + waterAmount >= effectiveMaxTarget;
+
   const handleIncrease = () => {
-    // Current total + session amount still shouldn't exceed MAX_WATER (optional but good)
-    const currentTotal = dbTotal + waterAmount;
-    if (currentTotal < MAX_WATER) {
+    if (!isAtLimit) {
       setWaterAmount((prev) => prev + INCREMENT);
     }
   };
@@ -77,7 +95,7 @@ export default function LogWaterScreen() {
       router.dismissAll();
     } catch (error) {
       console.error("Error logging water:", error);
-      alert("Не вдалося зберегти запис. Спробуйте ще раз.");
+      Alert.alert("Помилка", "Не вдалося зберегти запис. Спробуйте ще раз.");
     } finally {
       setIsSaving(false);
     }
@@ -98,8 +116,13 @@ export default function LogWaterScreen() {
       );
     }
 
+    // Dynamic number of glasses based on SESSION_MAX or target
+    const maxGlassesToShow = Math.ceil(effectiveMaxTarget / GLASS_CAPACITY);
+
     // Logic for filling glasses
-    for (let i = 0; i < MAX_GLASSES; i++) {
+    for (let i = 0; i < maxGlassesToShow; i++) {
+      if (remaining <= 0) break;
+
       if (remaining >= GLASS_CAPACITY) {
         glasses.push(
           <Image
@@ -159,15 +182,17 @@ export default function LogWaterScreen() {
               onPress={handleDecrease}
               style={[
                 styles.controlButton,
-                waterAmount === 0 && styles.disabledButton,
+                (waterAmount === 0 || isSaving) && styles.disabledButton,
               ]}
-              disabled={waterAmount === 0}
+              disabled={waterAmount === 0 || isSaving}
             >
               <HugeiconsIcon
                 icon={MinusSignIcon}
                 size={32}
                 color={
-                  waterAmount === 0 ? Colors.neutral[300] : Colors.primary[500]
+                  waterAmount === 0 || isSaving
+                    ? Colors.neutral[300]
+                    : Colors.primary[500]
                 }
               />
             </TouchableOpacity>
@@ -181,15 +206,15 @@ export default function LogWaterScreen() {
               onPress={handleIncrease}
               style={[
                 styles.controlButton,
-                waterAmount === MAX_WATER && styles.disabledButton,
+                (isAtLimit || isSaving) && styles.disabledButton,
               ]}
-              disabled={waterAmount === MAX_WATER}
+              disabled={isAtLimit || isSaving}
             >
               <HugeiconsIcon
                 icon={PlusSignIcon}
                 size={32}
                 color={
-                  waterAmount === MAX_WATER
+                  isAtLimit || isSaving
                     ? Colors.neutral[300]
                     : Colors.primary[500]
                 }
