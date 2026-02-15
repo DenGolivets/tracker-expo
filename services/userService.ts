@@ -1,13 +1,9 @@
 import {
-  addDoc,
-  collection,
+  arrayUnion,
   doc,
   getDoc,
-  getDocs,
-  query,
   serverTimestamp,
   setDoc,
-  where,
 } from "firebase/firestore";
 import { db } from "../config/firebaseConfig";
 
@@ -119,13 +115,24 @@ export const completeOnboarding = async (userId: string) => {
 
 export const getDailyLogs = async (userId: string, date: string) => {
   try {
-    const logsRef = collection(db, "users", userId, "logs");
-    const q = query(logsRef, where("date", "==", date));
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const logRef = doc(db, "users", userId, "logs", date);
+    const logSnap = await getDoc(logRef);
+
+    if (logSnap.exists()) {
+      const data = logSnap.data();
+      const exercises = (data.exercises || []).map(
+        (ex: any, index: number) => ({
+          ...ex,
+          id: ex.id || `ex-${index}`,
+        }),
+      );
+      const meals = (data.meals || []).map((meal: any, index: number) => ({
+        ...meal,
+        id: meal.id || `meal-${index}`,
+      }));
+      return [...exercises, ...meals];
+    }
+    return [];
   } catch (error) {
     console.error("Error getting daily logs:", error);
     throw error;
@@ -134,13 +141,41 @@ export const getDailyLogs = async (userId: string, date: string) => {
 
 export const addDailyLog = async (userId: string, logData: any) => {
   try {
-    const logsRef = collection(db, "users", userId, "logs");
-    const docRef = await addDoc(logsRef, {
+    const date = logData.date || new Date().toISOString().split("T")[0];
+    const logRef = doc(db, "users", userId, "logs", date);
+
+    const validTypes = ["exercise", "food"];
+    if (!validTypes.includes(logData.type)) {
+      throw new Error(
+        `Invalid log type: "${logData.type}". Expected "exercise" or "food".`,
+      );
+    }
+
+    const typeKey = logData.type === "exercise" ? "exercises" : "meals";
+    const prefix = logData.type === "exercise" ? "ex" : "meal";
+
+    // Ensure unique ID exists for stable React keys and future operations
+    const finalLogData = {
       ...logData,
-      createdAt: serverTimestamp(),
-    });
-    console.log("Daily log added with ID:", docRef.id);
-    return docRef.id;
+      id:
+        logData.id ||
+        `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+    };
+
+    await setDoc(
+      logRef,
+      {
+        [typeKey]: arrayUnion({
+          ...finalLogData,
+          createdAt: new Date().toISOString(), // arrayUnion doesn't support serverTimestamp inside objects
+        }),
+        updatedAt: serverTimestamp(),
+      },
+      { merge: true },
+    );
+
+    console.log(`Daily ${logData.type} log added to document: ${date}`);
+    return date;
   } catch (error) {
     console.error("Error adding daily log:", error);
     throw error;

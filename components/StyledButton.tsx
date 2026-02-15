@@ -15,6 +15,7 @@ interface StyledButtonProps {
   isLoading?: boolean;
   variant?: "primary" | "secondary" | "outline";
   style?: ViewStyle;
+  disabled?: boolean;
 }
 
 export const StyledButton: React.FC<StyledButtonProps> = ({
@@ -23,13 +24,15 @@ export const StyledButton: React.FC<StyledButtonProps> = ({
   isLoading = false,
   variant = "primary",
   style,
+  disabled = false,
 }) => {
+  const isButtonDisabled = isLoading || disabled;
   if (variant === "primary") {
     return (
       <TouchableOpacity
         onPress={onPress}
-        disabled={isLoading}
-        style={[styles.container, style]}
+        disabled={isButtonDisabled}
+        style={[styles.container, style, isButtonDisabled && styles.disabled]}
         activeOpacity={0.8}
       >
         <LinearGradient
@@ -52,8 +55,13 @@ export const StyledButton: React.FC<StyledButtonProps> = ({
     return (
       <TouchableOpacity
         onPress={onPress}
-        disabled={isLoading}
-        style={[styles.container, styles.buttonOutline, style]}
+        disabled={isButtonDisabled}
+        style={[
+          styles.container,
+          styles.buttonOutline,
+          style,
+          isButtonDisabled && styles.disabled,
+        ]}
       >
         {isLoading ? (
           <ActivityIndicator color={Colors.primary[500]} />
@@ -67,8 +75,13 @@ export const StyledButton: React.FC<StyledButtonProps> = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-      disabled={isLoading}
-      style={[styles.container, styles.buttonSecondary, style]}
+      disabled={isButtonDisabled}
+      style={[
+        styles.container,
+        styles.buttonSecondary,
+        style,
+        isButtonDisabled && styles.disabled,
+      ]}
     >
       {isLoading ? (
         <ActivityIndicator color="#4f46e5" />
@@ -123,5 +136,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     letterSpacing: 0.5,
+  },
+  disabled: {
+    opacity: 0.5,
   },
 });

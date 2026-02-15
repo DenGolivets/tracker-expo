@@ -9,7 +9,8 @@ import { Colors } from "@/constants/Colors";
 import { useDailyStats } from "@/hooks/useDailyStats";
 import { saveUserPlan, updateWaterIntake } from "@/services/userService";
 import { useUser } from "@clerk/clerk-expo";
-import React, { useState } from "react";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -31,6 +32,12 @@ export default function Index() {
     isLoading,
     refresh,
   } = useDailyStats(selectedDate);
+
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+    }, [refresh]),
+  );
 
   const handleSaveTargets = async (newTargets: {
     dailyCalories: number;
