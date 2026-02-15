@@ -129,28 +129,36 @@ export const RecentActivity: React.FC<RecentActivityProps> = ({ logs }) => {
           }
 
           return (
-            <View
-              key={log.id}
-              style={[
-                styles.logItem,
-                index === logs.length - 1 && styles.lastLogItem,
-              ]}
-            >
-              <View style={styles.logIconContainer}>
+            <View key={log.id} style={styles.exerciseCard}>
+              <View style={styles.exerciseIconContainer}>
                 <MaterialCommunityIcons
                   name="food-apple"
-                  size={24}
+                  size={32}
                   color={Colors.primary[500]}
                 />
               </View>
-              <View style={styles.logInfo}>
+
+              <View style={styles.exerciseInfo}>
                 <Text style={styles.logName}>{log.name}</Text>
-                <Text style={styles.logStats}>
-                  {log.calories} ккал • П: {log.protein || 0} • Ж:{" "}
-                  {log.fats || 0} • В: {log.carbs || 0}
-                </Text>
+
+                <View style={styles.cardRow}>
+                  <HugeiconsIcon
+                    icon={FireIcon}
+                    size={14}
+                    color={Colors.primary[500]}
+                  />
+                  <Text style={styles.cardDetailText}>{log.calories} ккал</Text>
+                </View>
+
+                <View style={styles.cardRow}>
+                  <Text style={styles.cardSubDetailText}>
+                    П: {log.protein || 0}г • Ж: {log.fats || 0}г • В:{" "}
+                    {log.carbs || 0}г
+                  </Text>
+                </View>
               </View>
-              {logTime && <Text style={styles.logTime}>{logTime}</Text>}
+
+              {logTime && <Text style={styles.logTimeTop}>{logTime}</Text>}
             </View>
           );
         })}

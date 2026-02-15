@@ -23,6 +23,7 @@ export default function Index() {
   const {
     consumedCalories,
     targetCalories,
+    burnedCalories,
     remainingCalories,
     consumed,
     targets,
@@ -102,6 +103,7 @@ export default function Index() {
                 remaining={remainingCalories}
                 target={targetCalories}
                 consumed={consumedCalories}
+                burned={burnedCalories}
                 proteinRemaining={Math.max(
                   0,
                   targets.protein - consumed.protein,

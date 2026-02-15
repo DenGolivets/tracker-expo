@@ -10,6 +10,7 @@ import { useCallback, useEffect, useState } from "react";
 export interface DailyStats {
   targetCalories: number;
   consumedCalories: number;
+  burnedCalories: number;
   remainingCalories: number;
   targetWater: number;
   consumedWater: number;
@@ -32,6 +33,7 @@ export const useDailyStats = (date: Date) => {
   const [stats, setStats] = useState<DailyStats>({
     targetCalories: 2000,
     consumedCalories: 0,
+    burnedCalories: 0,
     remainingCalories: 2000,
     targetWater: 2.0,
     consumedWater: 0,
@@ -93,6 +95,7 @@ export const useDailyStats = (date: Date) => {
       setStats({
         targetCalories: targets.calories,
         consumedCalories: totals.consumed,
+        burnedCalories: totals.burned,
         remainingCalories: Math.max(
           0,
           targets.calories + totals.burned - totals.consumed,

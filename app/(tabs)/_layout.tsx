@@ -42,6 +42,8 @@ export default function TabsLayout() {
       router.push("/log-water");
     } else if (actionId === "log-exercise") {
       router.push("/log-exercise");
+    } else if (actionId === "food-db") {
+      router.push("/search-food");
     }
     // Handle other global actions here
   };
