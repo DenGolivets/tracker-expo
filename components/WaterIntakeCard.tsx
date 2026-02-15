@@ -9,25 +9,21 @@ interface WaterIntakeCardProps {
   onEdit: () => void;
 }
 
-// 9 glasses represent the total daily target
-const MAX_GLASSES = 9;
+const GLASS_CAPACITY = 0.25; // 250ml in liters
 
 export const WaterIntakeCard: React.FC<WaterIntakeCardProps> = ({
   consumed,
   target,
   onEdit,
 }) => {
-  const oneGlassValue = target > 0 ? target / MAX_GLASSES : 0;
-  const consumedGlasses = oneGlassValue > 0 ? consumed / oneGlassValue : 0;
-  const remainingGlasses = Math.max(
-    0,
-    MAX_GLASSES - Math.floor(consumedGlasses),
-  );
+  const maxGlasses = target > 0 ? Math.ceil(target / GLASS_CAPACITY) : 8;
+  const consumedGlasses = consumed / GLASS_CAPACITY;
+  const remainingGlasses = Math.max(0, (target - consumed) / GLASS_CAPACITY);
 
   const renderGlasses = () => {
     const glasses = [];
 
-    for (let i = 0; i < MAX_GLASSES; i++) {
+    for (let i = 0; i < maxGlasses; i++) {
       let imageSource;
       if (consumedGlasses >= i + 1) {
         imageSource = require("../assets/images/full_glass.png");
@@ -62,7 +58,10 @@ export const WaterIntakeCard: React.FC<WaterIntakeCardProps> = ({
 
       <View style={styles.footer}>
         <Text style={styles.footerText}>
-          Залишилось: <Text style={styles.boldText}>{remainingGlasses}</Text>{" "}
+          Залишилось:{" "}
+          <Text style={styles.boldText}>
+            {remainingGlasses.toFixed(1).replace(".0", "")}
+          </Text>{" "}
           склянок
         </Text>
       </View>
@@ -103,13 +102,14 @@ const styles = StyleSheet.create({
   },
   glassesContainer: {
     flexDirection: "row",
-    flexWrap: "nowrap",
-    justifyContent: "space-between",
+    flexWrap: "wrap",
+    justifyContent: "flex-start",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 8,
+    gap: 8,
   },
   glassIcon: {
-    flex: 1,
+    width: 24,
     height: 32,
     resizeMode: "contain",
   },

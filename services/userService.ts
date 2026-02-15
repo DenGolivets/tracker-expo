@@ -2,6 +2,7 @@ import {
   arrayUnion,
   doc,
   getDoc,
+  increment,
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
@@ -184,10 +185,10 @@ export const addDailyLog = async (userId: string, logData: any) => {
 
 export const getWaterIntake = async (userId: string, date: string) => {
   try {
-    const waterRef = doc(db, "users", userId, "dailyStats", date);
-    const waterSnap = await getDoc(waterRef);
-    if (waterSnap.exists()) {
-      return waterSnap.data().waterIntake || 0;
+    const logRef = doc(db, "users", userId, "logs", date);
+    const logSnap = await getDoc(logRef);
+    if (logSnap.exists()) {
+      return logSnap.data().waterIntake || 0;
     }
     return 0;
   } catch (error) {
@@ -202,16 +203,16 @@ export const updateWaterIntake = async (
   liters: number,
 ) => {
   try {
-    const waterRef = doc(db, "users", userId, "dailyStats", date);
+    const logRef = doc(db, "users", userId, "logs", date);
     await setDoc(
-      waterRef,
+      logRef,
       {
-        waterIntake: liters,
+        waterIntake: increment(liters),
         updatedAt: serverTimestamp(),
       },
       { merge: true },
     );
-    console.log("Water intake updated");
+    console.log("Water intake incremented in logs");
   } catch (error) {
     console.error("Error updating water intake:", error);
     throw error;

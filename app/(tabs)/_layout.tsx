@@ -1,8 +1,5 @@
 import { ActionMenuModal } from "@/components/ActionMenuModal";
-import { WaterIntakeModal } from "@/components/WaterIntakeModal";
 import { Colors } from "@/constants/Colors";
-import { updateWaterIntake } from "@/services/userService";
-import { useUser } from "@clerk/clerk-expo";
 import {
   Add01Icon,
   ChartBreakoutSquareIcon,
@@ -38,26 +35,11 @@ const CustomTabButton = (props: any) => {
 export default function TabsLayout() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user } = useUser();
   const [isActionMenuVisible, setIsActionMenuVisible] = useState(false);
-  const [isWaterModalVisible, setIsWaterModalVisible] = useState(false);
-
-  const handleUpdateWater = async (liters: number) => {
-    if (!user?.id) return;
-    const dateString = new Date().toISOString().split("T")[0];
-    try {
-      await updateWaterIntake(user.id, dateString, liters);
-      // We might need a global refresh mechanism eventually,
-      // but for now we update the DB.
-    } catch (error) {
-      console.error("Error updating water globally:", error);
-      throw error;
-    }
-  };
 
   const handleAction = (actionId: string) => {
     if (actionId === "add-water") {
-      setIsWaterModalVisible(true);
+      router.push("/log-water");
     } else if (actionId === "log-exercise") {
       router.push("/log-exercise");
     }
@@ -161,12 +143,6 @@ export default function TabsLayout() {
         isVisible={isActionMenuVisible}
         onClose={() => setIsActionMenuVisible(false)}
         onAction={handleAction}
-      />
-      <WaterIntakeModal
-        isVisible={isWaterModalVisible}
-        onClose={() => setIsWaterModalVisible(false)}
-        onSave={handleUpdateWater}
-        initialValue={0} // Default to adding fresh water
       />
     </>
   );
