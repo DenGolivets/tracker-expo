@@ -40,7 +40,10 @@ export default function ExerciseResultScreen() {
         ? parseInt(params.calories)
         : 0;
 
+      const logId = `ex-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
       await addDailyLog(user.id, {
+        id: logId,
         name: params.title,
         calories: numericCalories,
         type: "exercise",

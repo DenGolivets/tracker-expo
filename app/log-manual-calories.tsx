@@ -40,7 +40,10 @@ export default function LogManualCaloriesScreen() {
       setIsLoading(true);
       const dateString = new Date().toISOString().split("T")[0];
 
+      const logId = `manual-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+
       await addDailyLog(user.id, {
+        id: logId,
         name: "Вручну (Вправа)",
         calories: parseInt(calories),
         type: "exercise",
