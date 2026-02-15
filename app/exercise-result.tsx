@@ -36,9 +36,13 @@ export default function ExerciseResultScreen() {
       setIsLoading(true);
       const dateString = new Date().toISOString().split("T")[0];
 
+      const numericCalories = Number.isFinite(Number(params.calories))
+        ? parseInt(params.calories)
+        : 0;
+
       await addDailyLog(user.id, {
         name: params.title,
-        calories: parseInt(params.calories),
+        calories: numericCalories,
         type: "exercise",
         exerciseId: params.exerciseId, // Required for icon selection in Recent Activity
         description: `${params.description} (${params.duration} хв)`,
@@ -103,6 +107,7 @@ export default function ExerciseResultScreen() {
           title="Записати"
           onPress={handleLogExercise}
           isLoading={isLoading}
+          disabled={!params.calories || parseInt(params.calories) <= 0}
         />
       </View>
     </SafeAreaView>

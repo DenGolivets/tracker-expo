@@ -123,12 +123,12 @@ export const getDailyLogs = async (userId: string, date: string) => {
       const exercises = (data.exercises || []).map(
         (ex: any, index: number) => ({
           ...ex,
-          id: `ex-${index}`,
+          id: ex.id || `ex-${index}`,
         }),
       );
       const meals = (data.meals || []).map((meal: any, index: number) => ({
         ...meal,
-        id: `meal-${index}`,
+        id: meal.id || `meal-${index}`,
       }));
       return [...exercises, ...meals];
     }
@@ -144,13 +144,29 @@ export const addDailyLog = async (userId: string, logData: any) => {
     const date = logData.date || new Date().toISOString().split("T")[0];
     const logRef = doc(db, "users", userId, "logs", date);
 
-    const type = logData.type === "exercise" ? "exercises" : "meals";
+    const validTypes = ["exercise", "food"];
+    if (!validTypes.includes(logData.type)) {
+      throw new Error(
+        `Invalid log type: "${logData.type}". Expected "exercise" or "food".`,
+      );
+    }
+
+    const typeKey = logData.type === "exercise" ? "exercises" : "meals";
+    const prefix = logData.type === "exercise" ? "ex" : "meal";
+
+    // Ensure unique ID exists for stable React keys and future operations
+    const finalLogData = {
+      ...logData,
+      id:
+        logData.id ||
+        `${prefix}-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+    };
 
     await setDoc(
       logRef,
       {
-        [type]: arrayUnion({
-          ...logData,
+        [typeKey]: arrayUnion({
+          ...finalLogData,
           createdAt: new Date().toISOString(), // arrayUnion doesn't support serverTimestamp inside objects
         }),
         updatedAt: serverTimestamp(),

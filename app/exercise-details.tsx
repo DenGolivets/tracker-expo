@@ -69,8 +69,19 @@ export default function ExerciseDetailsScreen() {
       };
 
       const met = metValues[id]?.[intensity] || 5.0;
-      const durationHours = parseInt(duration) / 60;
+
+      const parsedDuration = Number.parseInt(duration || "", 10);
+      if (Number.isNaN(parsedDuration) || parsedDuration <= 0) {
+        alert("Будь ласка, введіть коректну тривалість тренування");
+        return;
+      }
+
+      const durationHours = parsedDuration / 60;
       const calculatedCalories = Math.round(met * weight * durationHours);
+
+      if (Number.isNaN(calculatedCalories)) {
+        throw new Error("Invalid calculation result");
+      }
 
       router.push({
         pathname: "/exercise-result" as any,
@@ -79,7 +90,7 @@ export default function ExerciseDetailsScreen() {
           title,
           description: descriptionInput || description,
           intensity: intensityLabels[intensity],
-          duration,
+          duration: parsedDuration.toString(),
           exerciseId: id,
         },
       });
